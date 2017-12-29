@@ -1,0 +1,4 @@
+logging.level.root= WARN
+logging.level.org.springframework.web= ERROR
+logging.level.com.concretepage= INFO
+server.port=8081

@@ -1,0 +1,24 @@
+.card{
+	word-break: break-all;
+	width: 350px;
+	height: 15px;
+    box-shadow: 2px 5px 10px black;
+	
+}
+
+/* #card{
+	background-color:#e8e8e8;
+	min-height: 40px;
+	width:300px;
+	padding:10px;
+	padding-bottom: 10px;
+	margin-top:10px;
+	margin-left: 10px;
+	margin-right: 10px;
+	display: inline-block;
+	word-break: break-all;
+	box-shadow:4px 6px 5px #c5c7cc;
+}
+#card:hover{
+	 box-shadow:4px 6px 5px #c5c7cc;
+} */

@@ -1,0 +1,61 @@
+package com.bridgeit.todo.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.bridgeit.todo.model.ErrorMessage;
+import com.bridgeit.todo.model.User;
+import com.bridgeit.todo.service.UserService;
+import com.bridgeit.todo.token.TokenGenerate;
+import com.bridgeit.todo.validation.Validator;
+
+@Controller
+public class UserController {
+
+	@Autowired
+	UserService userService;
+
+	@Autowired
+	Validator validator;
+
+	@Autowired
+	TokenGenerate tokenGenerate;
+
+	@Autowired
+	ErrorMessage errorMessage;
+	
+	
+	@RequestMapping(value = "/register")
+	public String saveUser() {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("user", new User());
+		return "Registration";
+	}
+
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	public ResponseEntity<ErrorMessage> saveUser(User user) {
+
+		String isValid = validator.validateUserRegistration(user);
+		if (isValid.equals("true")) {
+
+			int isValidate = userService.saveUser(user);
+			ModelMap map = new ModelMap();
+			map.put("User", user);
+			if (isValidate != 0) {
+				errorMessage.setResponseMessage("registered Successfully....");
+				map.put("User", user);
+				return ResponseEntity.ok(errorMessage);
+			} else {
+				errorMessage.setResponseMessage(isValid);
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+			}
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+	}
+}

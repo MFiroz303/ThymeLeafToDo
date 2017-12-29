@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<md-content flex layout="row" layout-align="space-around" layout-padding="layout-padding" ng-cloak="ng-cloak">
+ <md-card  flex-gt-sm="66" flex-gt-md="33" style= "max-height:540px"> 
+  <md-card-content>
+     <form name="form">
+
+	  <md-input-container class="md-block"> 
+	   <label>First Name</label>
+	    <input type="text" name="firstName"  th:text="${user.firstName}" required>
+	  </md-input-container>
+
+	  <md-input-container class="md-block">
+	   <label>Last Name</label> 
+	    <input type="text" name="lastName" th:text="${user.lastName}" required>
+	  </md-input-container>
+
+	  <md-input-container class="md-block">
+	   <label>Email</label>
+	    <input type="email" name="email" th:text="${user.email}" required>
+      </md-input-container>
+
+	  <md-input-container class="md-block"> 
+	   <label>Password</label>
+	    <input type="password" name="password" th:text="${user.password}" required>
+	  </md-input-container>
+
+	  <md-input-container class="md-block"> 
+	   <label>Contact</label>
+	    <input type="contact" name="contact" th:text="${user.contact}" required> 
+	  </md-input-container>
+
+	  <md-button  ng-click="registerUser()" th:href="@{/hello}"
+		class="md-raised md-primary" type="submit">&nbsp Sign Up &nbsp</md-button>
+	  <a th:href="@{/Login}">Sign In?</a>
+	 </form>
+   </md-card-actions>
+ </md-card> 
+</md-content>
+
+</body>
+</html>

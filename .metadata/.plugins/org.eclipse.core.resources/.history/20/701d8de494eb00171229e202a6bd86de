@@ -1,0 +1,98 @@
+package com.bridgeit.todo.controller;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.bridgeit.todo.model.ErrorMessage;
+import com.bridgeit.todo.model.User;
+import com.bridgeit.todo.service.UserService;
+import com.bridgeit.todo.validation.Validator;
+
+@Controller
+public class UserController {
+
+	@Autowired
+	UserService userService;
+
+	@Autowired
+	Validator validator;
+
+	/*@Autowired
+	TokenGenerate tokenGenerate;
+*/
+	
+	
+	
+	@RequestMapping(value = "/register")
+	public ModelAndView register() {
+		
+		User user=new User(); 
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("user", user);
+		modelAndView.setViewName("login");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/userLogin")
+	public ModelAndView login() {
+		User user=new User(); 
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("user", user);
+		modelAndView.setViewName("login");
+		return modelAndView;
+	}
+
+	@RequestMapping(value = "/saveUser", method = RequestMethod.POST)
+	public ResponseEntity<ErrorMessage> saveUser(User user) {
+		ErrorMessage message=new ErrorMessage();
+
+		String isValid = validator.validateUserRegistration(user);
+		if (isValid.equals("true")) {
+
+			int isValidate = userService.saveUser(user);
+			ModelMap map = new ModelMap();
+			map.put("User", user);
+			if (isValidate != 0) {
+				message.setResponseMessage("registered Successfully....");
+				map.put("User", user);
+				return ResponseEntity.ok(message);
+			} else {
+				message.setResponseMessage(isValid);
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+			}
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+	}
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public ResponseEntity<ErrorMessage> userLogin( User user,HttpSession session) {
+		
+		ErrorMessage message=new ErrorMessage();
+		User userLogin = userService.getUserByEmail(user.getEmail());
+
+		ModelMap map = new ModelMap();
+		map.put("User", user);
+		if (userLogin == null) {
+			message.setResponseMessage("user with this email not exist");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+		}
+
+		boolean match = BCrypt.checkpw(user.getPassword(), userLogin.getPassword());
+		if (!match) {
+			message.setResponseMessage("wrong password");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+		}
+		else {
+		    session.setAttribute("user", userLogin);
+	   }
+		    return ResponseEntity.ok(message);
+	  }
+}

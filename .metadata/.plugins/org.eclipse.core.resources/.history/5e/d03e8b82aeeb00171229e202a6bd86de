@@ -1,0 +1,46 @@
+package com.bridgeit.todo.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.bridgeit.todo.model.ErrorMessage;
+import com.bridgeit.todo.model.Note;
+
+public class NoteController {
+	
+	@Autowired
+	NoteService noteService;
+
+	@Autowired
+	UserService userService;
+
+	
+	@RequestMapping(value = "/addNote", method = RequestMethod.POST)
+	public ModelAndView saveNotes(Note note) {
+
+		if (id == 0) {
+		ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setResponseMessage("Data Successfully added ");
+		}
+		User user1 = userService.getUserById(id);
+		Date date = new Date();
+		note.setCreatedDate(date);
+		note.setModifiedDate(date);
+
+		note.setUser(user1);
+		int userId = noteService.saveNotes(note);
+
+		if (userId != 0) {
+			logger.info("Data Successfully inserted");
+			errorMessage.setResponseMessage("Data Successfully inserted ");
+			return ResponseEntity.status(HttpStatus.CREATED).body(errorMessage);
+		}
+		logger.info("Data not inserted");
+		errorMessage.setResponseMessage("Note could not be added");
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+		// return ResponseEntity.ok(errorMessage);
+	}
+
+}

@@ -1,0 +1,88 @@
+package com.bridgeit.todo.dao;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.bridgeit.todo.model.User;
+
+@Service("UserDao")
+public class UserDaoImpl implements UserDao {
+
+	@Autowired
+	private SessionFactory sessionFactory;
+	/*
+	 * public SessionFactory getSessionFactory() { return sessionFactory; }
+	 * 
+	 * public void setSessionFactory(SessionFactory sessionFactory) {
+	 * this.sessionFactory = sessionFactory; }
+	 */
+
+	/////////////// Register New Users ///////////////////////// */
+
+	public int saveUser(User user) {
+		int id = 0;
+		Session session = sessionFactory.openSession();
+		Transaction transaction = null;
+		try {
+			transaction = session.beginTransaction();
+			id = (int) session.save(user);
+			transaction.commit();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return id;
+	}
+
+	////////////////// Login RegisteredUser ////////////
+
+	@SuppressWarnings("deprecation")
+	public User userLogin(User user) {
+		Session session = sessionFactory.openSession();
+		Criteria criteria = session.createCriteria(User.class);
+		criteria.add(Restrictions.eq("email", user.getEmail()));
+		criteria.add(Restrictions.eq("password", user.getPassword()));
+		criteria.add(Restrictions.eq("isActivated", true));
+		User finalUser = (User) criteria.uniqueResult();
+		if (finalUser == null) {
+			session.close();
+			return null;
+		}
+		session.close();
+		return finalUser;
+	}
+
+	@Override
+	@SuppressWarnings({ "finally" })
+	public User getUserByEmail(String email) {
+		Session session = sessionFactory.openSession();
+		/*
+		 * Criteria criteria = session.createCriteria(User.class);
+		 * criteria.add(Restrictions.eq("email", email)); User user = (User)
+		 * criteria.setMaxResults(1).uniqueResult();
+		 */
+
+		// get user object from db
+		Query<User> query = session.createQuery("from User where email= :email", User.class)
+				.setParameter("email", email);
+		User user = null;
+
+		try {
+			user = query.getSingleResult();
+
+		} catch (Exception e) {
+		} finally {
+
+			session.close();
+			return user;
+		}
+	}
+	
+}

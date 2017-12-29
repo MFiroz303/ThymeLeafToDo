@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+     <form name="form" th:action="@{/register}" method="post">
+
+	  <md-input-container class="md-block"> 
+	   <label>First Name</label>
+	    <input type="text" name="firstName"  th:text="${user.firstName}" required>
+	  </md-input-container>
+
+	  <md-input-container class="md-block">
+	   <label>Last Name</label> 
+	    <input type="text" name="lastName" th:text="${user.lastName}" required>
+	  </md-input-container>
+
+	  <md-input-container class="md-block">
+	   <label>Email</label>
+	    <input type="email" name="email" th:text="${user.email}" required>
+      </md-input-container>
+
+	  <md-input-container class="md-block"> 
+	   <label>Password</label>
+	    <input type="password" name="password" th:text="${user.password}" required>
+	  </md-input-container>
+
+	  <md-input-container class="md-block"> 
+	   <label>Contact</label>
+	    <input type="contact" name="contact" th:text="${user.contact}" required> 
+	  </md-input-container>
+
+	  <md-button  type="submit"> Sign Up </md-button>
+	  <a th:href="@{/Login}">Sign In?</a>
+	 </form>
+   </md-card-actions>
+ </md-card> 
+</md-content>
+
+</body>
+</html>

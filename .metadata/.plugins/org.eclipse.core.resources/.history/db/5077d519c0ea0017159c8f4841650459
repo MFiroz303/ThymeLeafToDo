@@ -1,0 +1,29 @@
+package com.bridgeit.todo.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.bridgeit.todo.service.UserService;
+import com.bridgeit.todo.token.TokenGenerate;
+import com.bridgeit.todo.validation.Validator;
+
+@Controller
+public class UserController {
+	
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	Validator validator;
+
+	@Autowired
+	TokenGenerate tokenGenerate;
+
+    @RequestMapping("/")
+	public void saveUser(ModelMap model) {
+	
+	
+}
+}
