@@ -3,15 +3,18 @@ package com.bridgeit.todo.controller;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.bridgeit.todo.model.ErrorMessage;
 import com.bridgeit.todo.model.Note;
@@ -28,9 +31,9 @@ public class NoteController {
 	@Autowired
 	UserService userService;
 
-	
-	@RequestMapping(value = "/addNote/{id}", method = RequestMethod.POST)
-	public ResponseEntity<ErrorMessage> saveNotes(@RequestBody Note note, @PathVariable int id) {
+/*	
+@RequestMapping(value = "/addNote/{id}", method = RequestMethod.POST)
+	public ResponseEntity<ErrorMessage> saveNotes(Note note, @PathVariable int id) {
 
 		ErrorMessage message = new ErrorMessage();
 		User user1 = userService.getUserById(id);
@@ -43,14 +46,13 @@ public class NoteController {
 		int userId = noteService.saveNotes(note);
 
 		if (userId != 0) {
-			
 			message.setResponseMessage("Data Successfully inserted ");
 			return ResponseEntity.status(HttpStatus.CREATED).body(message);
 		}
 		message.setResponseMessage("Note could not be added");
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
-	}
-	
+	*/
+/*
 	@RequestMapping(value = "/noteList", method = RequestMethod.GET)
 	public ResponseEntity<List<Note>> findAllNote(int id) {
 		
@@ -62,5 +64,46 @@ public class NoteController {
 		}
 		     message.setResponseMessage("error to display the notes");
 		     return new ResponseEntity<List<Note>>(HttpStatus.BAD_REQUEST);	
+	}
+	  }*/
+	
+	
+	@RequestMapping(value= "/addNote", method = RequestMethod.POST)
+	public ModelAndView addNote( HttpSession session, int id, Note note) {
+		
+		/*note.setTitle(title);
+		note.setDescription(description);*/
+		//User noteUser = userService.getUserById(id);
+		User noteUser=(User) session.getAttribute("user");
+		System.out.println("add notes...");
+		Date date = new Date();
+		note.setCreatedDate(date);
+		note.setModifiedDate(date);	
+		note.setUser(noteUser);
+		List<Note> notes=noteService.findAllNote(noteUser);
+		
+		ModelAndView modelAndView=new ModelAndView();
+		modelAndView.setViewName("home");
+		modelAndView.addObject("user",noteUser);
+		modelAndView.addObject("notes",notes);
+		modelAndView.addObject("note",note);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/delete/{id}",method = RequestMethod.GET)
+	public ModelAndView deleteNote(@PathVariable int id, Note note, HttpSession session) {
+		
+		System.out.println("Inside delete");
+		noteService.deleteNoteById(id);
+		
+		User noteUser=(User) session.getAttribute("user");
+		List<Note> notes=noteService.findAllNote(noteUser);
+		ModelAndView modelAndView=new ModelAndView();
+		
+		modelAndView.setViewName("home");
+		modelAndView.addObject("user",noteUser);
+		modelAndView.addObject("notes",notes);
+		modelAndView.addObject("note",note);
+		return modelAndView;	
 	}
 }

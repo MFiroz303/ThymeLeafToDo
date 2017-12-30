@@ -16,4 +16,8 @@ public interface NoteDao {
 
 	List<Note> findAllNote(User user);
 
+	public void deleteNoteById(int noteId);
+
+	//public void deleteNoteById(Note note);
+
 }

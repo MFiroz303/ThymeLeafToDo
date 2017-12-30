@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -42,11 +43,6 @@ public class NoteDaoImpl implements NoteDao {
 	@Override
 	public List<Note> findAllNote(User user) {
 		Session session = sessionFactory.openSession();
-		/*User user1 = session.get(User.class, user.getId());
-		List<Note> note = user1.getNote();
-		note.size();
-		System.out.println(note.size());*/
-		
 		Criteria criteria=session.createCriteria(Note.class);
 		criteria.add(Restrictions.eq("user", user));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -80,4 +76,32 @@ public class NoteDaoImpl implements NoteDao {
 		}
 		return user;
 	}
+	
+	/*/////////////////////////////// Delete Notes By Id ///////////////////////////////*/	
+	@Override
+	public void deleteNoteById(int noteId) {
+
+		Session session = sessionFactory.openSession();
+		Transaction transaction = null;
+		try {
+		transaction=session.beginTransaction();
+				String sql="delete Note where noteId =:noteId";
+				Query query=session.createQuery(sql);
+				query.setParameter("noteId", noteId);
+				query.executeUpdate();
+				transaction.commit();
+				System.out.println("deleted");
+			}
+			catch (Exception e) {
+				if(transaction!=null)
+					transaction.rollback();
+				
+				e.printStackTrace();
+			}
+			finally {
+				session.close();
+			}
+
+	}
+
 }

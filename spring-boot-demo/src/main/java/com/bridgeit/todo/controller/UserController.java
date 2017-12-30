@@ -111,6 +111,8 @@ public class UserController {
 		else {
 		    session.setAttribute("user", userLogin);
 			List<Note> notes = noteService.findAllNote(userLogin);
+			Note note = new Note();
+			 modelAndView.addObject("note", note);
 		    modelAndView.addObject("notes", notes);
 		    modelAndView.addObject("user", user);
 		    modelAndView.setViewName("home");

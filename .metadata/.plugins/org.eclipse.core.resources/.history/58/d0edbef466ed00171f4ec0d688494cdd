@@ -1,0 +1,120 @@
+package com.bridgeit.todo.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.bridgeit.todo.model.ErrorMessage;
+import com.bridgeit.todo.model.Note;
+import com.bridgeit.todo.model.User;
+import com.bridgeit.todo.service.NoteService;
+import com.bridgeit.todo.service.UserService;
+import com.bridgeit.todo.token.TokenGenerate;
+import com.bridgeit.todo.validation.Validator;
+
+@Controller
+public class UserController {
+
+	@Autowired
+	UserService userService;
+
+	@Autowired
+	Validator validator;
+
+	/*@Autowired
+	TokenGenerate tokenGenerate;
+*/
+	@Autowired
+	NoteService noteService;
+	
+	
+	@RequestMapping(value = "/register")
+	public ModelAndView register() {
+		
+		User user=new User(); 
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("user", user);
+		modelAndView.setViewName("register");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/")
+	public ModelAndView login() {
+		User user=new User();
+		System.out.println("inside login view@@@@@@@@@@@@@@@");
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("user", user);
+		modelAndView.setViewName("login");
+		return modelAndView;
+	}
+
+	@RequestMapping(value = "/saveUser", method = RequestMethod.POST)
+	public ModelAndView saveUser(User user) {
+		
+		ErrorMessage message=new ErrorMessage();
+		ModelAndView modelAndView = new ModelAndView();	
+		String isValid = validator.validateUserRegistration(user);
+		if (isValid.equals("true")) {
+
+			int isValidate = userService.saveUser(user);
+			ModelMap map = new ModelMap();
+			map.put("User", user);
+			if (isValidate != 0) {
+				String token = TokenGenerate.generate(user.getId());
+				
+				map.put("User", user);
+				modelAndView.addObject("user", user);
+				modelAndView.setViewName("login");
+				return modelAndView;
+			} else {
+				message.setResponseMessage(isValid);
+				return modelAndView;
+			}
+		}
+		return modelAndView;
+	}
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public ModelAndView userLogin(@ModelAttribute User user,HttpSession session) {
+		
+		ErrorMessage message=new ErrorMessage();
+		User userLogin = userService.getUserByEmail(user.getEmail());
+		
+		ModelAndView modelAndView = new ModelAndView();	
+		ModelMap map = new ModelMap();
+		map.put("User", user);
+		
+		if (userLogin == null) {
+			message.setResponseMessage("user with this email not exist");
+			modelAndView.addObject("user", user);
+			modelAndView.setViewName("login");
+			return modelAndView;
+		}
+		boolean match = BCrypt.checkpw(user.getPassword(), userLogin.getPassword());
+		
+		if (!match) {
+			message.setResponseMessage("wrong password");
+			modelAndView.addObject("user", user);
+			modelAndView.setViewName("login");
+			return modelAndView;
+		}
+		else {
+		    session.setAttribute("user", userLogin);
+			List<Note> notes = noteService.findAllNote(userLogin);
+		    modelAndView.addObject("notes", notes);
+		    modelAndView.addObject("user", user);
+		    modelAndView.setViewName("home");
+		    return modelAndView;
+		 }     
+	  }
+}
