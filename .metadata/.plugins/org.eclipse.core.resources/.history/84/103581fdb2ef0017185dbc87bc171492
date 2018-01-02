@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+<div class="container">
+          <h4 class="modal-title">Update Note</h4>
+        </div>
+        
+         <form action="#" th:action="@{/update}" th:object="${note}" method="POST"> 
+          <input th:field="*{id}"></input>
+         <input type="text"  id="til" th:field="*{title}"  /><br/>
+		<input type="text" id="desc" th:field="*{description}" /><br/>
+		<input type="submit"  value="update"/>
+   </form>
+ </div>
+		</div>
+		</div>
+		</div>
+	
+</body>
+</html>
+

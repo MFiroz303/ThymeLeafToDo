@@ -1,5 +1,5 @@
 .card{
-	background-color:#42f4ee;
+	background-color:#3a7f8a;
 	width: 310px;
 	padding:10px;
 	padding-bottom: 10px;
@@ -25,14 +25,14 @@ margin:8px;
 	    font-size: 40px;
    }
    #description{
-   width:60%;
+   width:90%;
     padding: 5px;
     font-size: 20px;
    }
    
   #title {
   
-     width:60%;
+     width:90%;
     padding: 5px;
     font-size: 20px;
    }
@@ -45,6 +45,6 @@ margin:8px;
    width:65px;
    height:34px;
    padding:10px;
-   background-color:#42f4c8;
+   background-color:#1f4954;
    }
    

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<div class="modal-content col-sm-12 col-xs-12"
+		style="background-color: {{note.color">
+		<div class="modal-body">
+
+			<div class="card-block"></div>
+			<b><div id="note-title" contenteditable="true"
+					ng-model="note.title"></div></b>
+			<div class="pull-right " width="30" height="10"
+				title="Created:{{note.createDate|date:'MMM dd'}}">Edited:
+				{{note.lastUpdated|date:'MMM dd'}}</div>
+			<div id="note-body" contenteditable="true" ng-model="note.body">
+			</div>
+
+		</div>
+		<div role="button" ng-click="updateNote(note)"
+			class="btn btn-done pull-right inline" data-dismiss="modal">DONE</div>
+	</div>
+</body>
+</html>

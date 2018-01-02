@@ -14,4 +14,6 @@ public interface NoteService {
 	public List<Note> findAllNote(User user);
 
 	public void deleteNoteById(int noteId);
+	
+	void updateNote(Note note);
 }

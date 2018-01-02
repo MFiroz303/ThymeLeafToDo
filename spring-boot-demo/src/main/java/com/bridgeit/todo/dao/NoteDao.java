@@ -18,6 +18,8 @@ public interface NoteDao {
 
 	public void deleteNoteById(int noteId);
 
+	public void updateNote(Note note);
+
 	//public void deleteNoteById(Note note);
 
 }

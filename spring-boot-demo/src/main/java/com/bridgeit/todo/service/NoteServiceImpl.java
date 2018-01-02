@@ -29,8 +29,11 @@ public class NoteServiceImpl implements NoteService {
 	
 	@Override
 	public void deleteNoteById(int noteId){
-		noteDao.deleteNoteById(noteId);
-		
+		noteDao.deleteNoteById(noteId);	
 	}
 
+	public void updateNote(Note note) {
+		noteDao.updateNote(note);
+		
+	}
 }

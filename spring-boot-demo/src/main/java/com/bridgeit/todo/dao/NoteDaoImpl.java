@@ -101,7 +101,23 @@ public class NoteDaoImpl implements NoteDao {
 			finally {
 				session.close();
 			}
+	  }
 
-	}
+	 /*/////////////////////////////// Update Notes ///////////////////////////////*/	
+		public void updateNote(Note note) {
+			Session session = sessionFactory.openSession();
+			Transaction transaction = null;
+			try {
 
+				transaction = session.beginTransaction();
+				session.saveOrUpdate(note);
+				transaction.commit();
+			} catch (Exception e) {
+				if (transaction != null) {
+					transaction.rollback();
+				}
+			} finally {
+				session.close();
+			}
+		}
 }
