@@ -1,69 +1,21 @@
-/*$('document').ready(function() {
+$('document').ready(function() {}
 	
-	var colors = [ 
-		{
-			'color' : '#FFFFFF',
-			'tooltip' : 'White'
-		}, 
-		{
-			'color' : '#F8BBD0',
-			'tooltip' : 'Pink'
-		}, 
-		{
-			'color' : '#DC94F7',
-			'tooltip' : 'purple'
-		}, 
-		{
-			'color' : '#82B1FF',
-			'tooltip' : 'Dark blue'
-		}, 
-		{
-			'color' : '#80D8FF',
-			'tooltip' : 'Blue'
-		},
-		{
-			'color' : '#CCFF90',
-			'tooltip' : 'Green'
-		}, 
-		{
-			'color' : '#FF8A80',
-			'tooltip' : 'Red'
-		}, 
-		{
-			'color' : '#D5DBDB',
-			'tooltip' : 'Grey'
-		}, 
-		{
-			'color' : '#FFD180',
-			'tooltip' : 'Orange'
-		}, 
-		{
-			'color' : '#F5F518',
-			'tooltip' : 'Yellow'
-		},
-		{
-			'color' : '#D7C9C8',
-			'tooltip' : 'Brown'
-		}, 
-		{
-			'color' : '#A7FFEB',
-			'tooltip' : 'Teal'
-		} ];
-		$scope.colors = colors;
-		$.ajax({
-			type:'POST',
-			url:'update',
-			data: {
-				'color' : note.color,
-				
-			},
-			}, function(response) {
-
-				$scope.error = response.data.message;
-			});
-		}
+	var showSideBar=true;
+function openNav() {
+	if(showSideBar==false){
+		showSideBar=true;
+    document.getElementById("mySidenav").style.paddingLeft = "250px";
+    document.getElementById("myNote").style.paddingLeft = "260px";
+    }
+	else{
+		showSideBar=false;
+		 document.getElementById("mySidenav").style.paddingLeft = "250px";
+		    document.getElementById("myNote").style.paddingLeft = "260px";
+	  
+	}
+	
 }
-
+/*
 function deleteNote(id) {
     $.ajax({
     	 type : 'DELETE',  
