@@ -16,4 +16,7 @@ public interface NoteService {
 	public void deleteNoteById(int noteId);
 	
 	void updateNote(Note note);
+
+	public void updateNotes(int noteId, Note note);
+
 }

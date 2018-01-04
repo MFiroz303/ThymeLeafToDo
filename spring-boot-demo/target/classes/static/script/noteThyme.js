@@ -1,16 +1,17 @@
-$('document').ready(function() {}
-	
+$('document').ready(function() {
+	});
+
 	var showSideBar=true;
-function openNav() {
-	if(showSideBar==false){
-		showSideBar=true;
-    document.getElementById("mySidenav").style.paddingLeft = "250px";
-    document.getElementById("myNote").style.paddingLeft = "260px";
+    function openNav() {
+	  if(showSideBar==false){
+		  showSideBar=false;
+          document.getElementById("mySidenav").style.paddingLeft = "250px";
+   
     }
 	else{
-		showSideBar=false;
-		 document.getElementById("mySidenav").style.paddingLeft = "250px";
-		    document.getElementById("myNote").style.paddingLeft = "260px";
+		  showSideBar=false;
+		  document.getElementById("mySidenav").style.paddingLeft = "250px";
+		 
 	  
 	}
 	

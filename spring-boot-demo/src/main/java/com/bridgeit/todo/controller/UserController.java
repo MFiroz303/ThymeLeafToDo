@@ -85,7 +85,7 @@ public class UserController {
 		return modelAndView;
 	}
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ModelAndView userLogin(User user,HttpSession session) {
+	public String userLogin(User user,HttpSession session) {
 		
 		ErrorMessage message=new ErrorMessage();
 		User userLogin = userService.getUserByEmail(user.getEmail());
@@ -98,7 +98,7 @@ public class UserController {
 			message.setResponseMessage("user with this email not exist");
 			modelAndView.addObject("user", user);
 			modelAndView.setViewName("login");
-			return modelAndView;
+			 return "redirect:/login";
 		}
 		boolean match = BCrypt.checkpw(user.getPassword(), userLogin.getPassword());
 		
@@ -106,7 +106,7 @@ public class UserController {
 			message.setResponseMessage("wrong password");
 			modelAndView.addObject("user", user);
 			modelAndView.setViewName("login");
-			return modelAndView;
+			return "redirect:/login";
 		}
 		else {
 		    session.setAttribute("user", userLogin);
@@ -116,7 +116,7 @@ public class UserController {
 		    modelAndView.addObject("notes", notes);
 		    modelAndView.addObject("user", user);
 		    modelAndView.setViewName("home");
-		    return modelAndView;
+		    return "redirect:/home";
 		 }     
 	  }
 	}

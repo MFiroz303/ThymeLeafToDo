@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+     <form name="form" th:action="@{/saveUser}" method="post" th:object="${user}">
+
+	  <div>
+	   <label>First Name</label>
+	    <input type="field" name="firstName"  th:text="*{firstName}" required>
+	  </div>
+
+	 <div>
+	   <label>Last Name</label> 
+	    <input type="field" name="lastName" th:text="*{lastName}" required>
+	 </div>
+
+	  <div>
+	   <label>Email</label>
+	    <input type="email" name="email"  required>
+      </div>
+
+	  <div>
+	   <label>Password</label>
+	    <input type="password" name="password"  required>
+	  </div>
+
+	 <div>
+	   <label>Contact</label>
+	    <input type="contact" name="contact" th:text="*{contact}" required> 
+	  </div>
+
+      <div>
+	  <input type="submit" value="Sign Up"></input></div>
+	 <!--  <a th:href="@{/login}">Sign In?</a> -->
+	 </form>
+   
+</body>
+</html>

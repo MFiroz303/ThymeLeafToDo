@@ -30,6 +30,26 @@ public class Note {
 	private Date createdDate;
 
 	private Date modifiedDate;
+	
+	private boolean archive;
+
+	private boolean trash;
+	
+	public boolean isArchive() {
+		return archive;
+	}
+
+	public void setArchive(boolean archive) {
+		this.archive = archive;
+	}
+
+	public boolean isTrash() {
+		return trash;
+	}
+
+	public void setTrash(boolean trash) {
+		this.trash = trash;
+	}
 
 	@JsonIgnore
 	@ManyToOne
