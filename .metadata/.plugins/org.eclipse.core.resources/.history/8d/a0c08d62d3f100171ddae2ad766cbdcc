@@ -1,0 +1,165 @@
+package com.bridgeit.todo.controller;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.bridgeit.todo.model.Note;
+import com.bridgeit.todo.model.User;
+import com.bridgeit.todo.service.NoteService;
+import com.bridgeit.todo.service.UserService;
+
+
+@Controller
+public class NoteController {
+	
+	@Autowired
+	NoteService noteService;
+
+	@Autowired
+	UserService userService;
+
+	@RequestMapping(value= "/addNote", method = RequestMethod.POST)
+	public String addNote( HttpSession session, Note note) {
+		
+
+		//User noteUser = userService.getUserById(id);
+		User noteUser=(User) session.getAttribute("user");
+		Date date = new Date();
+		note.setCreatedDate(date);
+		note.setModifiedDate(date);	
+		note.setUser(noteUser);
+		noteService.saveNotes(note);
+		List<Note> notes=noteService.findAllNote(noteUser);
+		
+		ModelAndView modelAndView=new ModelAndView();
+		modelAndView.setViewName("home");
+		modelAndView.addObject("user",noteUser);
+		modelAndView.addObject("notes",notes);
+		modelAndView.addObject("note",note);
+		return "redirect:/home";
+	}
+	
+	@RequestMapping(value="/delete/{id}",method = RequestMethod.GET)
+	public String deleteNote(@PathVariable int id, Note note, HttpSession session) {
+		
+		System.out.println("Inside delete");
+		noteService.deleteNoteById(id);
+		return "redirect:/home";	
+	}
+	
+	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
+	public  ModelAndView update(@PathVariable int id,HttpSession session) {
+	
+		ModelAndView modelAndView=new ModelAndView();
+		Note oldNote = noteService.getNoteById(id);
+		modelAndView.addObject("note",oldNote);
+		modelAndView.setViewName("updateNote");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/update",method = RequestMethod.POST)
+	public String updateNote(Note note,HttpSession session)
+	{
+		User user=(User) session.getAttribute("user");
+		
+		Date date=new Date();
+		note.setModifiedDate(date);
+		note.setCreatedDate(date);
+		Note oldNote = noteService.getNoteById(note.getNoteId());
+		
+		if(user!=null) {
+			if (oldNote.getUser().getId() == user.getId()) {
+				note.setUser(user);
+				noteService.updateNote(note);
+		    }
+		}
+		return "redirect:/home";
+  }
+	
+	@RequestMapping(value="/arch/{status}/{id}",method = RequestMethod.GET)
+	public String otherFunction(@PathVariable("status") int status, @PathVariable("id") int id,HttpSession session){
+		
+		Note note=noteService.getNoteById(id);
+		User user=(User) session.getAttribute("user");
+		note.setUser(user);
+		Date date=new Date();
+		note.setModifiedDate(date);
+		System.out.println("before status@@$$####");
+		
+		if(status==1) {
+			note.setArchive(true);
+			System.out.println("status"+status);
+		}else if(status==2) {
+			
+			note.setArchive(false);
+			noteService.updateNotes(note.getNoteId(),note);
+			return "redirect:/archive";
+		}
+		
+		System.out.println("after redirect archives@@####@@@###@@@###@@@");
+		return "redirect:/home";
+		
+	}
+	
+	/*@RequestMapping(value = "view/{id}", headers=("content-type=multipart/*"), method = RequestMethod.GET)
+    public ModelAndView viewMenu(Note note, @PathVariable int id, @RequestParam("file") MultipartFile file,
+                           RedirectAttributes redirectAttributes) {
+ 
+		ModelAndView modelAndView =new ModelAndView();
+		User user = userService.getUserById(id);
+        ((RedirectAttributes) note).addAttribute("note", note.getNoteId());
+      
+        //add photo upload coding here.
+ 
+        ((RedirectAttributes) note).addAttribute("image",note.getImage());
+         System.out.println("File is:" + file.getName());
+        return modelAndView;
+    }*/
+	
+	@RequestMapping("/home")
+	public ModelAndView home(User user, HttpSession session) {
+		
+		ModelAndView modelAndView=new ModelAndView();
+		User noteUser=(User) session.getAttribute("user");
+		//User noteUser = userService.getUserById(id);
+		modelAndView.addObject("user",user);
+		List<Note> notes=noteService.findAllNote(noteUser);
+		modelAndView.addObject("notes",notes);
+		Note note=new Note();
+		modelAndView.addObject("note",note);
+		modelAndView.setViewName("home");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/copy/{id}",method = RequestMethod.GET)
+	public String makeCopy(@PathVariable int id,HttpSession session) {
+		Note copy = noteService.getNoteById(id);
+		User noteUser=(User) session.getAttribute("user");
+		Date date = new Date();
+		copy.setCreatedDate(date);
+		copy.setModifiedDate(date);
+		copy.setUser(noteUser);
+		noteService.saveNotes(copy);
+		return "redirect:/home";
+	}
+	
+	@RequestMapping("/archive")
+	public ModelAndView archivePage( HttpSession session) {
+		User noteUser=(User) session.getAttribute("user");
+		ModelAndView modelAndView=new ModelAndView();
+		modelAndView.addObject("user",noteUser);
+		List<Note> note=noteService.findAllNote(noteUser);
+		modelAndView.addObject("notes",note);
+		return modelAndView;
+	}
+}

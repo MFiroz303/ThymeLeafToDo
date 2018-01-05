@@ -13,8 +13,8 @@ public class ConnectionConfig extends  WebMvcConfigurerAdapter {
         registry.addViewController("/login").setViewName("login");
         registry.addViewController("/home").setViewName("home");
         registry.addViewController("/updateNote").setViewName("updateNote");
-        /*registry.addViewController("/archive").setViewName("archive");
-        registry.addViewController("/trash").setViewName("trash");*/
+        registry.addViewController("/archive").setViewName("archive");
+        registry.addViewController("/trash").setViewName("trash");
     }
 
 }

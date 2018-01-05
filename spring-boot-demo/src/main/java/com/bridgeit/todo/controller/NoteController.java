@@ -11,7 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bridgeit.todo.model.Note;
 import com.bridgeit.todo.model.User;
@@ -98,7 +101,7 @@ public class NoteController {
 		
 		if(status==1) {
 			note.setArchive(true);
-			
+			noteService.updateNotes(note.getNoteId(),note);
 		}else if(status==2) {
 			
 			note.setArchive(false);
@@ -116,9 +119,10 @@ public class NoteController {
                            RedirectAttributes redirectAttributes) {
  
 		ModelAndView modelAndView =new ModelAndView();
+		System.out.println("@##@#@###@###@@@@##++++++++++++++++");
 		User user = userService.getUserById(id);
         ((RedirectAttributes) note).addAttribute("note", note.getNoteId());
-      
+        System.out.println("-----------------------------------------------------");
         //add photo upload coding here.
  
         ((RedirectAttributes) note).addAttribute("image",note.getImage());
@@ -160,6 +164,40 @@ public class NoteController {
 		modelAndView.addObject("user",noteUser);
 		List<Note> note=noteService.findAllNote(noteUser);
 		modelAndView.addObject("notes",note);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/trash/{flag}/{id}",method = RequestMethod.GET)
+	public String trash(@PathVariable("flag") int flag, @PathVariable("id") int id,HttpSession session){
+		
+		Note note=noteService.getNoteById(id);
+		User user=(User) session.getAttribute("user");
+		note.setUser(user);
+		Date date=new Date();
+		note.setModifiedDate(date);
+		System.out.println("before status@@$$####");
+		
+		if(flag==1) {
+			note.setTrash(true);
+			noteService.updateNotes(note.getNoteId(),note);
+		}else if(flag==2) {
+			
+			note.setTrash(false);
+			noteService.updateNotes(note.getNoteId(),note);
+			return "redirect:/trash";
+		}
+		
+		System.out.println("after redirect archives@@####@@@###@@@###@@@");
+		return "redirect:/home";
+	}
+	
+	@RequestMapping("/trash")
+	public ModelAndView trashPage( HttpSession session) {
+		User user=(User) session.getAttribute("user");
+		ModelAndView modelAndView=new ModelAndView();
+		modelAndView.addObject("noteUser",user);
+		List<Note> notes=noteService.findAllNote(user);
+		modelAndView.addObject("notes",notes);
 		return modelAndView;
 	}
 }

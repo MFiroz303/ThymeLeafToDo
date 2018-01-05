@@ -1,8 +1,0 @@
-#card{
-	
-	word-break: break-all;
-	width: 200px;
-	height: 112px;
-    box-shadow: 2px 5px 10px black;
-	
-}
