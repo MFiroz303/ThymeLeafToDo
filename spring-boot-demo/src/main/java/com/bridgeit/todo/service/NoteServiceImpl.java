@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bridgeit.todo.dao.NoteDao;
+import com.bridgeit.todo.model.DocDetails;
 import com.bridgeit.todo.model.Note;
 import com.bridgeit.todo.model.User;
 
@@ -39,5 +40,18 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void updateNotes(int noteId, Note note) {
 		     noteDao.updateNotes(noteId,note);
+	}
+	
+
+	public List<DocDetails> getAllDoc(){
+		return noteDao.getAllDoc();
+	}
+	
+	public void saveDetails(DocDetails docDetails) {
+		noteDao.saveDetails(docDetails);
+	}
+	
+	public DocDetails getDocDetails(int id) {
+		return noteDao.getDocDetails(id);
 	}
 }

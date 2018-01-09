@@ -1,0 +1,99 @@
+$('document').ready(function() {
+	});
+
+	var showSideBar=true;
+    function openNav() {
+	  if(showSideBar==false){
+		  showSideBar=true;
+          document.getElementById("mySidenav").style.paddingLeft = "250px";
+   
+    }
+	else{
+		  showSideBar=false;
+		  document.getElementById("mySidenav").style.paddingLeft = "0px";
+	}
+}
+    
+  /*  function get_random_color() {
+        var color = '#';
+        var letters = ['000000','FF0000','00FF00','0000FF','FFFF00','00FFFF','FF00FF','C0C0C0'];
+        color += letters[Math.floor(Math.random() * letters.length)];
+        document.getElementById('posts:before').style.background = color;
+        document.getElementByClassName('sidebar').style.background = color; 
+    }
+    
+    $scope.view=function(){
+		var view = localStorage.getItem('view');
+		if(view=='list'){
+			$scope.displayView('list');
+		}else{
+			$scope.displayView('grid');
+		}
+	}
+
+	$scope.displayView=function(type){
+		
+		if(type=='list'){
+			$scope.view='75';
+		    $scope.width='100%';
+			$scope.list=false
+			$scope.grid=true
+			localStorage.setItem('view','list');
+		}else{
+			$scope.view='33';
+			$scope.width='260px';
+			$scope.grid=false;
+			$scope.list=true;
+			localStorage.setItem('view','grid');
+		}
+			
+	}*/
+    
+  //SOCIAL SHARE
+    function facebookShare(title, description) {
+    	console.log(title);
+    	FB.init({
+    		appId : '383534318755042',
+    		status : true,
+    		cookie : true,
+    		xfbml : true,
+    		version : 'v2.4'
+    	});
+
+    	FB.ui({
+    		method : 'share_open_graph',
+    		action_type : 'og.likes',
+    		action_properties : JSON.stringify({
+    			object : {
+    				'og:title' : title,
+    				'og:description' : description
+    			}
+    		})
+    	}, function(response) {
+    		if (response && !response.error_message) {
+    		} else {
+    			respons.error;
+    		}
+    	});
+    };
+/*function update(){
+	var note={};
+	note.title = $('#title').val();
+	alert("##title-->"+note.title);
+	
+	note.description = $('#description').val();
+	
+	$.ajax({
+		type:'POST',
+		url:'update',
+		data: {
+			'title' : note.title,
+			'description' : note.description
+		},
+	success:function(result){
+		$('#editModal').modal('hide'),
+		console.log(result);
+	}
+	});
+}
+}*/

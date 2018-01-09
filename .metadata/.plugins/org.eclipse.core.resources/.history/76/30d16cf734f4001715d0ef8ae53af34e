@@ -1,0 +1,290 @@
+package com.bridgeit.todo.controller;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.bridgeit.todo.model.Note;
+import com.bridgeit.todo.model.User;
+import com.bridgeit.todo.service.NoteService;
+import com.bridgeit.todo.service.UserService;
+
+
+@Controller
+public class NoteController {
+	
+	@Autowired
+	NoteService noteService;
+
+	@Autowired
+	UserService userService;
+
+	@RequestMapping(value= "/addNote", method = RequestMethod.POST)
+	public String addNote( HttpSession session, Note note) {
+		
+
+		//User noteUser = userService.getUserById(id);
+		User noteUser=(User) session.getAttribute("user");
+		Date date = new Date();
+		note.setCreatedDate(date);
+		note.setModifiedDate(date);	
+		note.setUser(noteUser);
+		noteService.saveNotes(note);
+		List<Note> notes=noteService.findAllNote(noteUser);
+		
+		ModelAndView modelAndView=new ModelAndView();
+		modelAndView.setViewName("home");
+		modelAndView.addObject("user",noteUser);
+		modelAndView.addObject("notes",notes);
+		modelAndView.addObject("note",note);
+		return "redirect:/home";
+	}
+	
+	@RequestMapping(value="/delete/{id}",method = RequestMethod.GET)
+	public String deleteNote(@PathVariable int id, Note note, HttpSession session) {
+		
+		System.out.println("Inside delete");
+		noteService.deleteNoteById(id);
+		return "redirect:/home";	
+	}
+	
+	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
+	public  ModelAndView update(@PathVariable int id,HttpSession session) {
+	
+		ModelAndView modelAndView=new ModelAndView();
+		Note oldNote = noteService.getNoteById(id);
+		modelAndView.addObject("note",oldNote);
+		modelAndView.setViewName("updateNote");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/update",method = RequestMethod.POST)
+	public String updateNote(Note note,HttpSession session)
+	{
+		User user=(User) session.getAttribute("user");
+		
+		Date date=new Date();
+		note.setModifiedDate(date);
+		note.setCreatedDate(date);
+		Note oldNote = noteService.getNoteById(note.getNoteId());
+		
+		if(user!=null) {
+			if (oldNote.getUser().getId() == user.getId()) {
+				note.setUser(user);
+				noteService.updateNote(note);
+		    }
+		}
+		return "redirect:/home";
+  }
+	
+	@RequestMapping(value="/arch/{status}/{id}",method = RequestMethod.GET)
+	public String otherFunction(@PathVariable("status") int status, @PathVariable("id") int id,HttpSession session){
+		
+		Note note=noteService.getNoteById(id);
+		User user=(User) session.getAttribute("user");
+		note.setUser(user);
+		Date date=new Date();
+		note.setModifiedDate(date);
+		System.out.println("before status@@$$####");
+		
+		if(status==1) {
+			note.setArchive(true);
+			noteService.updateNotes(note.getNoteId(),note);
+		}else if(status==2) {
+			
+			note.setArchive(false);
+			noteService.updateNotes(note.getNoteId(),note);
+			return "redirect:/archive";
+		}
+		
+		System.out.println("after redirect archives@@####@@@###@@@###@@@");
+		return "redirect:/home";
+		
+	}
+	
+	/*@RequestMapping(value = "view/{id}", headers=("content-type=multipart/*"), method = RequestMethod.GET)
+    public ModelAndView viewMenu(Note note, @PathVariable int id, @RequestParam("file") MultipartFile file,
+                           RedirectAttributes redirectAttributes) {
+ 
+		ModelAndView modelAndView =new ModelAndView();
+		System.out.println("@##@#@###@###@@@@##++++++++++++++++");
+		User user = userService.getUserById(id);
+        ((RedirectAttributes) note).addAttribute("note", note.getNoteId());
+        System.out.println("-----------------------------------------------------");
+        //add photo upload coding here.
+ 
+        ((RedirectAttributes) note).addAttribute("image",note.getImage());
+         System.out.println("File is:" + file.getName());
+        return modelAndView;
+    }*/
+	
+	@RequestMapping("/home")
+	public ModelAndView home(User user, HttpSession session) {
+		
+		ModelAndView modelAndView=new ModelAndView();
+		User noteUser=(User) session.getAttribute("user");
+		//User noteUser = userService.getUserById(id);
+		modelAndView.addObject("user",user);
+		List<Note> notes=noteService.findAllNote(noteUser);
+		modelAndView.addObject("notes",notes);
+		Note note=new Note();
+		modelAndView.addObject("note",note);
+		modelAndView.setViewName("home");
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/copy/{id}",method = RequestMethod.GET)
+	public String makeCopy(@PathVariable int id,HttpSession session) {
+		Note copy = noteService.getNoteById(id);
+		User noteUser=(User) session.getAttribute("user");
+		Date date = new Date();
+		copy.setCreatedDate(date);
+		copy.setModifiedDate(date);
+		copy.setUser(noteUser);
+		noteService.saveNotes(copy);
+		return "redirect:/home";
+	}
+	
+	@RequestMapping("/archive")
+	public ModelAndView archivePage( HttpSession session) {
+		User noteUser=(User) session.getAttribute("user");
+		ModelAndView modelAndView=new ModelAndView();
+		modelAndView.addObject("user",noteUser);
+		List<Note> note=noteService.findAllNote(noteUser);
+		modelAndView.addObject("notes",note);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/trash/{flag}/{id}",method = RequestMethod.GET)
+	public String trash(@PathVariable("flag") int flag, @PathVariable("id") int id,HttpSession session){
+		
+		Note note=noteService.getNoteById(id);
+		User user=(User) session.getAttribute("user");
+		note.setUser(user);
+		Date date=new Date();
+		note.setModifiedDate(date);
+		System.out.println("before status@@$$####");
+		
+		if(flag==1) {
+			note.setTrash(true);
+			noteService.updateNotes(note.getNoteId(),note);
+		}else if(flag==2) {
+			
+			note.setTrash(false);
+			noteService.updateNotes(note.getNoteId(),note);
+			return "redirect:/trash";
+		}
+		
+		System.out.println("after redirect archives@@####@@@###@@@###@@@");
+		return "redirect:/home";
+	}
+	
+	@RequestMapping("/trash")
+	public ModelAndView trashPage( HttpSession session) {
+		User user=(User) session.getAttribute("user");
+		ModelAndView modelAndView=new ModelAndView();
+		modelAndView.addObject("noteUser",user);
+		List<Note> notes=noteService.findAllNote(user);
+		modelAndView.addObject("notes",notes);
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/getOwner", method = RequestMethod.POST)
+	public ResponseEntity<User> getOwner(@RequestHeader("Authorization") String Authorization, @RequestBody Note note,
+			HttpServletRequest request) {
+
+		    int id = VerifyJwt.verify(Authorization);
+		    logger.info("verifying user by passing token in header for owner note");
+		    User user = userService.getUserById(id);
+		
+	    if (user != null) {
+		    Note owNote = noteService.getNoteById(note.getNoteId());
+			return ResponseEntity.ok(owNote.getUser());
+		} else {
+			return ResponseEntity.ok(null);
+		}
+	}
+
+	
+	/**
+	 * @param UserNotes(get the shared notes by user)
+	 * 
+	 * @param Token(verifying and passing token header )
+	 * 
+	 * @return ResponseEntity.Ok
+	 * 
+	 * @param User(check Current User , current user notes, owner )
+	 * 
+	 * Description (method used here to get note by ID ,get user by Id, get shared User)
+	 * */
+	
+	@RequestMapping(value = "/sharedUserNotes", method = RequestMethod.POST)
+	public ResponseEntity<List<User>> sharedNotesUser(@RequestHeader("Authorization") String Authorization,
+			@RequestBody Note note, HttpServletRequest request) {
+
+		    int id = VerifyJwt.verify(Authorization);
+		    User user = userService.getUserById(id);
+
+		if (user != null) {
+			logger.info("verifying shared notes by passing token in header.");
+			Note userNote = noteService.getNoteById(note.getNoteId());
+			if (userNote == null) {
+				return null;
+			}
+			List<User> owner = userNote.getSharedUser();
+			return ResponseEntity.ok(owner);
+		} else {
+			return ResponseEntity.ok(null);
+		}
+	}
+
+	/**
+	 * @param CollabNotes(get the collab User with Owner)
+	 * 
+	 * @param Token(verifying and passing token header, passing email in header )
+	 * 
+	 * @return ResponseEntity.Ok
+	 * 
+	 * @param User(check Current User)
+	 * 
+	 * @Description (method used here to get note by ID ,get user by Email, get shared User, add shared user, 
+	                                                                 update old notes with shared user)
+	 * */
+	
+	@RequestMapping(value = "/collaborator", method = RequestMethod.POST)
+	public String collaborator(Note note, HttpServletRequest request) {
+		
+		    Note oldNote = noteService.getNoteById(note.getNoteId());
+		    User sharedUser;
+		    System.out.println("before: " + oldNote);
+
+		try {
+			sharedUser = userService.getUserByEmail(request.getHeader("email"));
+		if (sharedUser == null) {
+			System.out.println("No User Email found");
+		 }
+
+		} catch (Exception E) {
+			System.out.println("No User Email found");
+		}
+
+		    oldNote.getSharedUser().add(sharedUser);
+		    noteService.updateNote(oldNote);
+		    System.out.println("after: " + oldNote);
+		    return null;
+		  
+	}
+}

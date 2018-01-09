@@ -2,6 +2,7 @@ package com.bridgeit.todo.service;
 
 import java.util.List;
 
+import com.bridgeit.todo.model.DocDetails;
 import com.bridgeit.todo.model.Note;
 import com.bridgeit.todo.model.User;
 
@@ -18,5 +19,11 @@ public interface NoteService {
 	void updateNote(Note note);
 
 	public void updateNotes(int noteId, Note note);
+	
+    public List<DocDetails> getAllDoc();
+	
+	public void saveDetails(DocDetails docDetails);
+	
+	public DocDetails getDocDetails(int id);
 
 }

@@ -52,8 +52,27 @@
        <input type="text" placeholder="Search.." name="search2" class="search12">
        <!-- <button type="submit"><i class="fa fa-search"></i></button> -->
     </form>
-   
     
+     <!-- <div ng-init="view()">
+          <img ng-if="list" onclick="displayView('list')" th:src="@{/image/listview.svg}">
+            <img ng-if="grid" onclick="displayView('grid')" th:src="@{/image/gridview.svg}">
+    </div> -->
+    
+   <span style="margin: 5px; padding:2px;">
+		<img th:src="@{/image/ic_account_circle_black_24px (1).svg}" / style="margin-top:-75px; margin-left: 1226px;"></span>
+ 
+    <!-- <ul class="dropdown-menu" role="menu">
+						
+						<li>
+						<br/>
+						<div th:text="${user.userName}"></div>
+						<div th:text="${user.userEmail}"></div>
+						
+						</li>
+						<li><button ng-click="openImageUploader('user')" style="background-color: blue; color: white">Change Profile</button></li>
+						<li onclick="logout()">logout</li>
+					</ul> -->
+					
  <!--   <span style="margin-left:1000px;">
 		<img th:src="@{/image/view2.svg}" /></span> -->
 		
@@ -114,8 +133,8 @@
 	
 	<!-- display Notes -->
 	<div th:each="note:${notes}" class="card" th:if="${note.archive!=true && note.trash!=true}" >
-	<span style="margin: 5px; padding:2px;">
-		<img th:src="@{/image/pinn.svg}" /></span>
+	<!-- <span>
+		<img th:src="@{/image/if_push-pin_57976.png}" style="margin-left: 285px;"/></span> -->
 		<div>
 			<b th:text="${note.title}" id="title"></b>
 		</div>
@@ -162,7 +181,7 @@
 	     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="margin-left: 0px;">
 		<li><a th:href="${'/trash/1/' + note.noteId}" name="delete" >delete</a></li>
 		<li><a th:href="${'/copy/'+note.noteId}">Make a Copy</a></li>
-		<li><a onclick="socialShare()">Social Share</a></li>
+		<li><!-- <a onclick="socialShare()">Social Share</a> --><a th:onclick="'facebookShare(\''+ ${note.title} +'\',\''+ ${note.description} +'\');'">Social Share</a></li>
 		</ul>
 		</div>
 	</div>
